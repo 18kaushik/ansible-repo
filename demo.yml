@@ -1,0 +1,11 @@
+---
+- name: Print Hello World
+  hosts: test  # Change this to your group name or host
+  tasks:
+    - name: Print Hello World
+      command: echo "Hello, World!"
+      register: result
+
+    - name: Show the output
+      debug:
+        var: result.stdout
