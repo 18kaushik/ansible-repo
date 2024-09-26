@@ -1,8 +1,8 @@
 ---
-- name: Print Hello World
-  hosts: test  # Change this to your group name or host
+- name: file creation
+  hosts: test 
   tasks:
-    - name: Print Hello World
+    - name: file creation
       command: touch ansible.csv
       register: result
 
