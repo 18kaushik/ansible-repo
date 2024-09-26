@@ -3,7 +3,7 @@
   hosts: test  # Change this to your group name or host
   tasks:
     - name: Print Hello World
-      command: echo "Hello, World!"
+      command: touch ansible.csv
       register: result
 
     - name: Show the output
