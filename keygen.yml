@@ -1,6 +1,6 @@
 ---
 - name: Generate SSH Key Pair
-  hosts: dev_server  # Replace with your target host or group
+  hosts: test  # Replace with your target host or group
   become: yes         # Use 'become' if you need elevated privileges
   tasks:
     - name: Ensure the SSH key pair is generated
