@@ -1,0 +1,18 @@
+---
+- name: Generate SSH Key Pair
+  hosts: test  # Replace with your target host or group
+  become: yes         # Use 'become' if you need elevated privileges
+  tasks:
+    - name: Ensure the SSH key pair is generated
+      ansible.posix.ssh_keygen:
+        path: "/home/ubuntu/.ssh/id_rsa"  # Change path if needed
+        type: rsa
+        bits: 4096
+        comment: "kaushik.dwivedi@sarvagram.com"
+        force: no
+      register: ssh_keygen
+
+    - name: Display generated keys
+      debug:
+        msg: "Private Key: {{ ssh_keygen.private_key }}\nPublic Key: {{ ssh_keygen.public_key }}"
+      when: ssh_keygen.changed
