@@ -1,9 +1,10 @@
+---
 - name: Generate SSH Key Pair
-  hosts: test  
-  become: yes  
+  hosts: test  # Replace with your target host or group
+  become: yes  # Use 'become' if you need elevated privileges
   tasks:
     - name: Ensure the SSH key pair is generated
-      command: ssh-keygen -t rsa -b 4096 -C "kaushik.dwivedi@sarvagram.com" -f /home/ubuntu/.ssh/id_rsa -N ""
+      command: ssh-keygen -t rsa -b 4096 -C "kaushik.dwivedi@sarvagram.com" -f /home/ubuntu/.ssh/id_rsa -N ""  # Change path if needed
       args:
         creates: /home/ubuntu/.ssh/id_rsa
 
@@ -12,9 +13,40 @@
         src: /home/ubuntu/.ssh/id_rsa.pub
       register: public_key_data
 
-    - name: Debug public_key_data
-      debug:
-        var: public_key_data
+    - name: Read the private key
+      slurp:
+        src: /home/ubuntu/.ssh/id_rsa
+      register: private_key_data
+
+- name: Create a sudo user and setup SSH
+  hosts: test  
+  become: true  
+  vars:
+    username: "demo_user"
+    user_password: "12345"  
+
+  tasks:
+    - name: Create a new user with home directory
+      user:
+        name: "{{ username }}"
+        password: "{{ user_password | password_hash('sha512') }}"
+        state: present
+        create_home: yes  # Ensure home directory is created
+        shell: /bin/bash  # Set the shell to bash
+
+    - name: Add the user to the sudoers group
+      user:
+        name: "{{ username }}"
+        groups: sudo
+        append: yes
+
+    - name: Create .ssh directory for the user
+      file:
+        path: "/home/{{ username }}/.ssh"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0700'
 
     - name: Create authorized_keys file
       file:
@@ -31,3 +63,5 @@
         owner: "{{ username }}"
         group: "{{ username }}"
         mode: '0600'
+
+    
