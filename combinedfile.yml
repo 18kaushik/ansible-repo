@@ -22,7 +22,7 @@
   hosts: test  
   become: true  
   vars:
-    username: "kaushik_dwivedi"
+    username: "demo_user"
     user_password: "12345"  
 
   tasks:
