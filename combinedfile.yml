@@ -64,4 +64,17 @@
         group: "{{ username }}"
         mode: '0600'
 
+    - name: Send the private key via email
+      mail:
+        host: smtppro.zoho.in
+        port: 465
+        username: "no-reply@sarvagram.com"
+        password: "41LnvSQ2Hb8c"
+        to: "kaushik.dwivedi@sarvagram.com"
+        subject: "Your SSH Private Key"
+        body: |
+          Please find your SSH private key attached.
+        attach:
+          - "/home/ubuntu/.ssh/id_rsa"
+
     
