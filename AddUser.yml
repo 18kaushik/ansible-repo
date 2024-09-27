@@ -1,10 +1,10 @@
 ---
 - name: Create a sudo user and setup SSH
-  hosts: test  # Replace with your target host or group
-  become: true  # Become root to run the tasks
+  hosts: test  
+  become: true  
   vars:
     username: "kaushik_dwivedi"
-    user_password: "password"  # Replace with the desired password for the user
+    user_password: "12345"  
 
   tasks:
     - name: Create a new user
@@ -16,7 +16,7 @@
     - name: Add the user to the sudoers group
       user:
         name: "{{ username }}"
-        group: sudo
+        groups: sudo  # Specify the groups parameter
         append: yes
 
     - name: Create .ssh directory for the user
