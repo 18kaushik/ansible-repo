@@ -1,7 +1,7 @@
 ---
 - name: Generate SSH Key Pair
-  hosts: test  # Replace with your target host or group
-  become: yes  # Use 'become' if you need elevated privileges
+  hosts: test  
+  become: yes  
   tasks:
     - name: Ensure the SSH key pair is generated
       command: ssh-keygen -t rsa -b 4096 -C "kaushik.dwivedi@sarvagram.com" -f /home/ubuntu/.ssh/id_rsa -N ""  # Change path if needed
