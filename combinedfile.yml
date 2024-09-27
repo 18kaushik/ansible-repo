@@ -1,10 +1,10 @@
 ---
 - name: Generate SSH Key Pair
-  hosts: test  # Replace with your target host or group
-  become: yes  # Use 'become' if you need elevated privileges
+  hosts: test  
+  become: yes  
   tasks:
     - name: Ensure the SSH key pair is generated
-      command: ssh-keygen -t rsa -b 4096 -C "kaushik.dwivedi@sarvagram.com" -f /home/ubuntu/.ssh/id_rsa -N ""  # Change path if needed
+      command: ssh-keygen -t rsa -b 4096 -C "kaushik.dwivedi@sarvagram.com" -f /home/ubuntu/.ssh/id_rsa -N ""  
       args:
         creates: /home/ubuntu/.ssh/id_rsa
 
@@ -13,18 +13,10 @@
         src: /home/ubuntu/.ssh/id_rsa.pub
       register: public_key_data
 
-    - name: Send the private key via email
-      mail:
-        host: smtp.example.com  # Replace with your SMTP server
-        port: 587  # Change if necessary
-        username: "your_email@example.com"
-        password: "your_email_password"
-        to: "kaushik.dwivedi@sarvagram.com"
-        subject: "Your SSH Private Key"
-        body: |
-          Please find your SSH private key attached.
-        attach:
-          - "/home/ubuntu/.ssh/id_rsa"
+    - name: Read the private key
+      slurp:
+        src: /home/ubuntu/.ssh/id_rsa
+      register: private_key_data
 
 - name: Create a sudo user and setup SSH
   hosts: test  
@@ -69,3 +61,16 @@
         owner: "{{ username }}"
         group: "{{ username }}"
         mode: '0600'
+
+    # - name: Send the private key via email
+    #   mail:
+    #     host: smtp.example.com  # Replace with your SMTP server
+    #     port: 587  # Change if necessary
+    #     username: "your_email@example.com"
+    #     password: "your_email_password"
+    #     to: "kaushik.dwivedi@sarvagram.com"
+    #     subject: "Your SSH Private Key"
+    #     body: |
+    #       Please find your SSH private key attached.
+    #     attach:
+    #       - "/home/ubuntu/.ssh/id_rsa"
