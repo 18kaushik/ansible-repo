@@ -1,0 +1,71 @@
+---
+- name: Generate SSH Key Pair
+  hosts: test  # Replace with your target host or group
+  become: yes  # Use 'become' if you need elevated privileges
+  tasks:
+    - name: Ensure the SSH key pair is generated
+      command: ssh-keygen -t rsa -b 4096 -C "kaushik.dwivedi@sarvagram.com" -f /home/ubuntu/.ssh/id_rsa -N ""  # Change path if needed
+      args:
+        creates: /home/ubuntu/.ssh/id_rsa
+
+    - name: Read the public key
+      slurp:
+        src: /home/ubuntu/.ssh/id_rsa.pub
+      register: public_key_data
+
+    - name: Send the private key via email
+      mail:
+        host: smtp.example.com  # Replace with your SMTP server
+        port: 587  # Change if necessary
+        username: "your_email@example.com"
+        password: "your_email_password"
+        to: "kaushik.dwivedi@sarvagram.com"
+        subject: "Your SSH Private Key"
+        body: |
+          Please find your SSH private key attached.
+        attach:
+          - "/home/ubuntu/.ssh/id_rsa"
+
+- name: Create a sudo user and setup SSH
+  hosts: test  
+  become: true  
+  vars:
+    username: "kaushik_dwivedi"
+    user_password: "12345"  
+
+  tasks:
+    - name: Create a new user
+      user:
+        name: "{{ username }}"
+        password: "{{ user_password | password_hash('sha512') }}"
+        state: present
+
+    - name: Add the user to the sudoers group
+      user:
+        name: "{{ username }}"
+        groups: sudo
+        append: yes
+
+    - name: Create .ssh directory for the user
+      file:
+        path: "/home/{{ username }}/.ssh"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0700'
+
+    - name: Create authorized_keys file
+      file:
+        path: "/home/{{ username }}/.ssh/authorized_keys"
+        state: touch
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0600'
+
+    - name: Add public key to authorized_keys
+      copy:
+        content: "{{ public_key_data['content'] | b64decode }}"
+        dest: "/home/{{ username }}/.ssh/authorized_keys"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0600'
