@@ -71,6 +71,7 @@
         username: "no-reply@sarvagram.com"
         password: "41LnvSQ2Hb8c"
         to: "kaushik.dwivedi@sarvagram.com"
+        from: "no-reply@sarvagram.com"
         subject: "Your SSH Private Key"
         body: |
           Please find your SSH private key attached.
