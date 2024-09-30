@@ -31,8 +31,8 @@
         name: "{{ username }}"
         password: "{{ user_password | password_hash('sha512') }}"
         state: present
-        create_home: yes  # Ensure home directory is created
-        shell: /bin/bash  # Set the shell to bash
+        create_home: yes  
+        shell: /bin/bash  
 
     - name: Add the user to the sudoers group
       user:
