@@ -4,7 +4,7 @@
   become: yes  
   tasks:
     - name: Ensure the SSH key pair is generated
-      command: ssh-keygen -t rsa -b 4096 -C "kaushik.dwivedi@sarvagram.com" -f /home/ubuntu/.ssh/id_rsa -N ""  # Change path if needed
+      command: ssh-keygen -t rsa -b 4096 -C "kaushik.dwivedi@sarvagram.com" -f /home/ubuntu/.ssh/id_rsa -N "" 
       args:
         creates: /home/ubuntu/.ssh/id_rsa
 
