@@ -1,0 +1,35 @@
+---
+- name: Update Certificates on Ubuntu Server
+  hosts: 43.205.40.123  
+  become: yes  
+  vars:
+    cert_src: /path/to/your/certificates  
+    cert_dest: /etc/ssl/certs/  
+    service_name: your_service_name  
+
+  tasks:
+    - name: Ensure destination directory exists
+      file:
+        path: "{{ cert_dest }}"
+        state: directory
+
+    - name: Copy new certificates to the server
+      copy:
+        src: "{{ item }}"
+        dest: "{{ cert_dest }}"
+        owner: root
+        group: root
+        mode: '0644'
+      with_fileglob:
+        - "{{ cert_src }}/*.crt"  
+
+    - name: Update CA certificates
+      command: update-ca-certificates
+      notify:
+        - Restart the service
+
+  handlers:
+    - name: Restart the service
+      service:
+        name: "{{ service_name }}"
+        state: restarted
