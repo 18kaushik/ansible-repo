@@ -1,0 +1,36 @@
+---
+- name: Create custom MOTD message on servers
+  hosts: your_servers_group  
+  become: yes  
+  tasks:
+    - name: Ensure the directory exists
+      file:
+        path: /etc/update-motd.d
+        state: directory
+        mode: '0755'
+
+    - name: Create 99-custom-message file with warning message
+      copy:
+        dest: /etc/update-motd.d/99-custom-message
+        content: |
+          #!/bin/sh
+          echo "WARNING
+          ==================================================================
+          This computer system belongs to Sarvagram and is intended for authorized use only. 
+          By accessing this system, you acknowledge and agree to comply with Sarvagram's 
+          Information Security - Acceptable Use Policy. Unauthorized or improper use of this 
+          system may lead to administrative disciplinary action, legal consequences, or 
+          criminal penalties. User activity on the system may be logged and monitored for 
+          security reasons and user is expressly providing consent for the same to be used 
+          for any legal / criminal proceedings. Your continued use of this system signifies 
+          your awareness and acceptance of these terms and conditions.
+          ==================================================================
+          "
+        mode: '0755'  
+    - name: Verify that the custom message was created
+      command: cat /etc/update-motd.d/99-custom-message
+      register: motd_output
+
+    - name: Display the output for verification
+      debug:
+        var: motd_output.stdout
